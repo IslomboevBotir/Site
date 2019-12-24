@@ -1,0 +1,38 @@
+<?php
+require "db.php";
+$data = $_POST;
+if(isset($data['do_login'])){
+	$errors = array();
+	$user = R::findOne('users', 'login = ?', array($data['login']));
+	if( $user ){
+		if(password_verify($data['password'], $user->password)){
+		$_SESSION['logged_user'] = $user;
+		echo '<div style="color: green;">Вы авторизованы!<br>Можете перейти на <a href="Home.php">главную</a>страницу</div><hr>';	
+		}else{
+		$errors[] = 'Неверно введён пароль';
+		}
+	}else{
+		$errors[] = 'Пользователь с таким логином не найден';	
+	}
+	if(!empty($errors)){
+		echo '<div style="color: red;">'.array_shift($errors).'</div><hr>';	
+	}
+}
+?>
+
+<form action="<?php $_SERVER['PHP_SELF']?>" method="POST">
+ <p>
+	<p id="center_form"><strong>Ваш логин</strong>:</p>
+    <p id="center_form"><input type="text" name="login" value="<?php echo @$data['login'];?>"></p>
+ </p>
+ 
+  <p>
+ 	<p id="center_form"><strong>Ваш пароль</strong>:</p>
+    <p id="center_form"><input type="password" name="password" value="<?php echo @$data['password'];?>"></p>
+ </p>
+ 
+  <p>
+    <p id="center_form"><button type="submit" name="do_login">Войти</button></p>
+ </p>
+ 
+</form>
