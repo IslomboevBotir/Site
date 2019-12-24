@@ -1,0 +1,52 @@
+<?php
+require "func.lib.php";
+define(@GUEST, "guest.txt");
+if($_SERVER['REQUEST_METHOD']=="POST" and  !empty($_POST["fname"]) and !empty($_POST["lname"])){ //!empty - не пусто 
+	$fname = filter($_POST["fname"]);
+	$lname = filter($_POST["lname"]);
+	$str = $lname." ".$fname."\r\n";//4
+	$f = fopen(GUEST, "a");
+	fwrite($f, $str);
+	fclose($f); 
+	header("Location: ".$_SERVER['PHP_SELF']);
+	exit;	
+}
+?>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Работа с файлами</title>
+</head>
+<style>
+body{
+	background-color:#333;
+	color:#F00;
+	text-align:center;
+}
+h1{
+	margin:0px;	
+}
+</style>
+<body>
+<hr>
+<h1>Заполните форму</h1>
+<form method="post" action="<?=@$_SERVER['../GUEST_BOOK/PHP_SELF'];?>">
+Имя:<br> <input type="text" name="fname" required><br>
+Фамилия:<br> <input type="text" name="lname" required><br>
+<br>
+<input type="submit" value="Отправить!">
+<hr>
+</form>
+<?php
+if(file_exists(GUEST)){
+	$people = file(GUEST); //file - это array file редкая функция //2
+	echo "<br>";
+	$i=1;
+	foreach($people as $person){
+		echo $i++.") ".$person."<br>";	
+	}
+}
+?>
+</body>
+</html>
